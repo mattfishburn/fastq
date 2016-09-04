@@ -16,150 +16,156 @@
 
 void printTopKmers(size_t topcount, const std::unordered_map<std::string, int>& countFromKmer)
 {
-	auto cmp = [](std::tuple<std::string, int> left, std::tuple<std::string, int> right) { return std::get<1>(left) > std::get<1>(right) ; };
-	std::priority_queue<std::tuple<std::string, int>, std::vector<std::tuple<std::string, int>>, decltype(cmp)> pq;
-	std::stack<std::tuple<std::string, int>> stack; // for reversing the p-queue
-	
-	std::tuple<std::string, int> next; // next item to be added to queue
+  std::priority_queue<std::tuple<int, std::string>, std::vector<std::tuple<int,  std::string>>, std::greater<std::tuple<int, std::string>>> pq;
+  std::stack<std::tuple<int, std::string>> stack; // for reversing the p-queue
+  
+  std::tuple<int, std::string> next; // next item to be added to queue
 
-	int count = 0;
-	int bottomCount = 0;
+  int count = 0;
+  int bottomCount = 0;
 
-	// first topcount iterations, expected work is (lg topcount)
-	// topcount to numKeys(countFromKmer) iterations (on iteration n), expected work is 1 + topcount (lg topcount) / n
-	// so topcount (lg topcount) (lg uniques) + uniques
-	for (auto const& kvp : countFromKmer)
-	{
-		count = kvp.second;
+  // first topcount iterations, expected work is (lg topcount)
+  // topcount to numKeys(countFromKmer) iterations (on iteration n), expected work is 1 + topcount (lg topcount) / n
+  // so topcount (lg topcount) (lg uniques) + uniques
+  for (auto const& kvp : countFromKmer)
+  {
+    count = kvp.second;
 
-		if ((pq.size() < topcount) || (bottomCount < count))
-		{
-			next = std::make_tuple(kvp.first, count);
-			pq.push(next);
-			if (pq.size() == 1 + topcount)
-			{
-				pq.pop();
-				bottomCount = std::get<1>(pq.top());
-			}
-		}
-	}
+    if ((pq.size() < topcount) || (bottomCount < count))
+    {
+      next = std::make_tuple(count, kvp.first);
+      pq.push(next);
+      if (pq.size() == 1 + topcount)
+      {
+        pq.pop();
+        bottomCount = std::get<0>(pq.top());
+      }
+    }
+  }
 
-	//they're backwards, use a stack to put them forwards
+  //they're backwards, use a stack to put them forwards
 
-	while(!pq.empty())
-	{
-		next = pq.top();
-		stack.push(next);
-		pq.pop();
-	}
+  while(!pq.empty())
+  {
+    next = pq.top();
+    stack.push(next);
+    pq.pop();
+  }
 
-	while (!stack.empty())
-	{
-		next = stack.top();
-		stack.pop();
+  while (!stack.empty())
+  {
+    next = stack.top();
+    stack.pop();
 
-		std::cout << std::get<0>(next) << " " << std::get<1>(next) << std::endl;
-	}
+    std::cout << std::get<1>(next) << " " << std::get<0>(next) << std::endl;
+  }
 }
 
 void countKmers(size_t k, const std::vector<std::string>& lines, std::unordered_map<std::string, int>& countFromKmer)
 {
-	size_t lineSize = 0;
-	std::string sub;
-	for (auto const& line : lines)
-	{
-		lineSize = line.size();
-		for (int i = 0 ; i + k <= lineSize ; ++i)
-		{
-			sub = line.substr(i, k);
-			if (0 == countFromKmer.count(sub))
-			{
-				countFromKmer[sub] = 1;
-			}
-			else
-			{
-				countFromKmer[sub] += 1;
-			}
-		}
-	}
+  size_t lineSize = 0;
+  std::string sub;
+  for (auto const& line : lines)
+  {
+    lineSize = line.size();
+    for (int i = 0 ; i + k <= lineSize ; ++i)
+    {
+      sub = line.substr(i, k);
+      if (0 == countFromKmer.count(sub))
+      {
+        countFromKmer[sub] = 1;
+      }
+      else
+      {
+        countFromKmer[sub] += 1;
+      }
+    }
+  }
 }
 
 int nonStrictParseFastq(const std::string& filename, std::vector<std::string>& lines)
 {
-	int linesProcessed = 0;
-	std::ifstream inp(filename);
-	int stanza = 0;
-	for (std::string line; std::getline(inp, line) ; )
-	{
-		if (1 == stanza)
-		{
-			lines.push_back(line);
-			linesProcessed += 1;
-		}
-		stanza = (stanza + 1) % 4;
-	}
-	inp.close();
-	return linesProcessed;
+  int linesProcessed = 0;
+  std::ifstream inp(filename);
+  int stanza = 0;
+  for (std::string line; std::getline(inp, line) ; )
+  {
+    if (1 == stanza)
+    {
+      lines.push_back(line);
+      linesProcessed += 1;
+    }
+    stanza = (stanza + 1) % 4;
+  }
+  inp.close();
+  return linesProcessed;
 }
 
 int main(int argc, char **argv)
 {
-	bool verbose = true;
-	bool blockAtEnd = true;
-	size_t k = 30;
-	size_t topcount = 25;
-	std::string fastqFilename("C:\\Users\\mfishburn\\Downloads\\ERR055763.filt.fastq");
+  if (4 != argc)
+  {
+    std::cout << "Usage: " << argv[0] << " filename k n" << std::endl;
+    std::cout << "Example: " << argv[0] << " foo.fastq 25 30" << std::endl;
+    exit(1);    
+  }
 
-	int linesProcessed = 0;
-	clock_t begin;
-	clock_t end;
+  bool verbose = false;
+  bool blockAtEnd = false;
+  size_t k = atoi(argv[2]);
+  size_t topcount = atoi(argv[3]);
+  std::string fastqFilename(argv[1]);
 
-	std::vector<std::string> lines;
+  int linesProcessed = 0;
+  clock_t begin;
+  clock_t end;
 
-	begin = clock();
+  std::vector<std::string> lines;
 
-	// read file in
+  begin = clock();
 
-	linesProcessed = nonStrictParseFastq( fastqFilename, lines );
+  // read file in
 
-	if (verbose)
-	{
-		std::cout << "read time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
-		std::cout << "lines read: " << linesProcessed << std::endl;
-		begin = clock();
-	}
+  linesProcessed = nonStrictParseFastq( fastqFilename, lines );
 
-	size_t sizeGuess = lines.size() * (lines[0].length() - k);
+  if (verbose)
+  {
+    std::cout << "read time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
+    std::cout << "lines read: " << linesProcessed << std::endl;
+    begin = clock();
+  }
 
-	std::unordered_map<std::string, int> countFromKmer(sizeGuess);
+  size_t sizeGuess = lines.size() * (lines[0].length() - k);
 
-	// count unique kmers
+  std::unordered_map<std::string, int> countFromKmer(sizeGuess);
 
-	countKmers(k, lines, countFromKmer);
+  // count unique kmers
 
-	if (verbose)
-	{
-		std::cout << "hist time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
-		begin = clock();
-	}
+  countKmers(k, lines, countFromKmer);
 
-	// grab top kmers
+  if (verbose)
+  {
+    std::cout << "hist time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
+    begin = clock();
+  }
 
-	printTopKmers(topcount, countFromKmer);
+  // grab top kmers
 
-	if (verbose)
-	{
-		std::cout << "p-q time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
-		begin = clock();
-	}
+  printTopKmers(topcount, countFromKmer);
 
-	if (blockAtEnd)
-	{
-		getchar();
-	}
+  if (verbose)
+  {
+    std::cout << "p-q time " << double(clock() - begin) / (CLOCKS_PER_SEC / 1000) << std::endl;
+    begin = clock();
+  }
 
-	end = clock();
+  if (blockAtEnd)
+  {
+    getchar();
+  }
 
-	return 0;
+  end = clock();
+
+  return 0;
 }
 
