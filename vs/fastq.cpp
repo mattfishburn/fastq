@@ -15,7 +15,7 @@
 #include <tuple>
 #include <ctime>
 
-void printTopKmers(unsigned int topcount, const std::unordered_map<std::string, int>& countFromKmer)
+void printTopKmers(size_t topcount, const std::unordered_map<std::string, int>& countFromKmer)
 {
 	auto cmp = [](std::tuple<std::string, int> left, std::tuple<std::string, int> right) { return std::get<1>(left) > std::get<1>(right) ; };
 	std::priority_queue<std::tuple<std::string, int>, std::vector<std::tuple<std::string, int>>, decltype(cmp)> pq;
@@ -63,9 +63,9 @@ void printTopKmers(unsigned int topcount, const std::unordered_map<std::string, 
 	}
 }
 
-void countKmers(unsigned int k, const std::vector<std::string>& lines, std::unordered_map<std::string, int>& countFromKmer)
+void countKmers(size_t k, const std::vector<std::string>& lines, std::unordered_map<std::string, int>& countFromKmer)
 {
-	unsigned int lineSize = 0;
+	size_t lineSize = 0;
 	std::string sub;
 	for (auto const& line : lines)
 	{
@@ -106,9 +106,9 @@ int nonStrictParseFastq(const std::string& filename, std::vector<std::string>& l
 int _tmain(int argc, _TCHAR* argv[])
 {
 	bool verbose = true;
-	bool blockAtEnd = false;
-	unsigned int k = 30;
-	unsigned int topcount = 25;
+	bool blockAtEnd = true;
+	size_t k = 30;
+	size_t topcount = 25;
 	std::string fastqFilename("C:\\Users\\mfishburn\\Downloads\\ERR055763.filt.fastq");
 
 	int linesProcessed = 0;
@@ -130,7 +130,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		begin = clock();
 	}
 
-	unsigned int sizeGuess = lines.size() * (lines[0].length() - k);
+	size_t sizeGuess = lines.size() * (lines[0].length() - k);
 
 	std::unordered_map<std::string, int> countFromKmer(sizeGuess);
 
