@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+#python files
+*.pyc
+*.egg
