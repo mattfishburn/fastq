@@ -15,9 +15,9 @@ There is an example file in the example folder, so you should be able to run:
 # Implementation Overview
 
 The program has three main parts:
-# Read input from file into vector lines
-# Histogram k-mers from the lines vector using a string->int hashmap (unordered_map)
-# After histograming, use a priority queue to track the top kmers, and output those top k-mers and the count to the command line.
+* Read input from file into vector lines
+* Histogram k-mers from the lines vector using a string->int hashmap (unordered_map)
+* After histograming, use a priority queue to track the top kmers, and output those top k-mers and the count to the command line.
 
 # Notes
 
