@@ -67,8 +67,8 @@ when outputting the most seen kmers.  Takes a little over half the time that pyt
 Would expect the runtime of the various parts to be:
 
 * File read: O(size) where size is the filesize
-* Histogramming: O(uniques) where uniques is the total number of kmers (using a hashmap / dictionary)
-* Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output (probabilistic)
+* Histogramming: O(kmers) where kmers is the total number of kmers (using a hashmap / dictionary)
+* Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output (probabilistic), uniques is the number of unique kmers
 
 ## c++ implementation (linux)
 
