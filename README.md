@@ -38,7 +38,7 @@ I tested the VS c++ and ubuntu c++ against python on one of the files.
 
 I profiled the VS C++ implementation; about a quarter of the
 time is spent checking if the kmer already exists in the hashmap
-countFromKmer, and about another quarter is  inserting it if it does not.  The next optimization I
+countFromKmer, and about another quarter is creating the value when it doesn't exist.  The next optimization I
 would take is to modify the value allocator for unordered_map to
 return zero, and just use ++countFromKmer[sub] instead of checking if
 the key exists along with inserting it if it doesn't (lines 80 - 86).  This would save a hash
