@@ -43,15 +43,21 @@ void printTopKmers(size_t topcount, const std::unordered_map<std::string, int>& 
     }
   }
 
+  if (pq.size() < topcount)
+  {
+    std::cout << "ERROR: Did not find " << topcount << " k-mers, only found " << pq.size() << "." << std::endl;
+    exit(1);
+  }
+  
   //they're backwards, use a stack to put them forwards
-
+  
   while(!pq.empty())
   {
     next = pq.top();
     stack.push(next);
     pq.pop();
   }
-
+  
   while (!stack.empty())
   {
     next = stack.top();
