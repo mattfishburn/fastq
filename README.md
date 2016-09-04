@@ -17,6 +17,6 @@ Plan is to use a hashmap / dictionary to map from kmer to count, but want to min
 
 Would expect the runtime of the various parts to be:
 
-File read: O(size) where size is the filesize
-Histogramming: O(uniques) where uniques is the total number of kmers (using a hashmap / dictionary)
-Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output (probabilistic)
+* File read: O(size) where size is the filesize
+* Histogramming: O(uniques) where uniques is the total number of kmers (using a hashmap / dictionary)
+* Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output (probabilistic)
