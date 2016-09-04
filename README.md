@@ -7,6 +7,11 @@ make all
 ./kmercount fastq-filename kmersize topcount
 ```
 
+There is an example file in the example folder, so you should be able to run:
+```
+./kmercount example/ERR055763.filt.fastq 30 25
+```
+
 # Notes
 
 I did not test any unicode compatibility of the file.  Assumed ASCII.
