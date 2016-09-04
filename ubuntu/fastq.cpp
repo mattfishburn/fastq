@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 {
   if (4 != argc)
   {
-    std::cout << "Usage: " << argv[0] << " filename k n" << std::endl;
+    std::cout << "Usage: " << argv[0] << " filename kmersize topcount" << std::endl;
     std::cout << "Example: " << argv[0] << " foo.fastq 25 30" << std::endl;
     exit(1);    
   }
