@@ -34,7 +34,7 @@ time is spent checking if the kmer already exists in the hashmap
 countFromKmer, and about another quarter is  inserting it if it does not.  The next optimization I
 would take is to modify the value allocator for unordered_map to
 return zero, and just use ++countFromKmer[sub] instead of checking if
-the key exists along with inserting it if it doesn't.  This would save a hash
+the key exists along with inserting it if it doesn't (lines 80 - 86).  This would save a hash
 and a lookup.  After that, I would probably multithread the problem
 using a dataflow model with a single producer consumer.  Another
 performance enhancement would be to improve the substring pulls.
