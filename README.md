@@ -12,6 +12,13 @@ There is an example file in the example folder, so you should be able to run:
 ./kmercount example/ERR055763.filt.fastq 30 25
 ```
 
+# Implementation Overview
+
+The program has three main parts:
+# Read input from file into vector lines
+# Histogram k-mers from the lines vector using a string->int hashmap (unordered_map)
+# After histograming, use a priority queue to track the top kmers, and output those top k-mers and the count to the command line.
+
 # Notes
 
 I did not test any unicode compatibility of the file.  Assumed ASCII.
@@ -36,8 +43,8 @@ would take is to modify the value allocator for unordered_map to
 return zero, and just use ++countFromKmer[sub] instead of checking if
 the key exists along with inserting it if it doesn't (lines 80 - 86).  This would save a hash
 and a lookup.  After that, I would probably multithread the problem
-using a dataflow model with a single producer consumer.  Another
-performance enhancement would be to improve the substring pulls.
+using a dataflow model with a single producer consumer.  Other
+performance enhancement would be to improve the substring pulls, improving the hash speed, trying a better hash_map, and more multi-threading like a mapReduce algorithm.
 
 # Approach 
 
