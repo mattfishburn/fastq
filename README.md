@@ -31,7 +31,7 @@ I treated the letter 'N' in the fastq file as though it were it's own letter.  I
 
 Overall, took about three hours:
 * About an hour to get the python implementation working and the c++ implementation designed based on what I learned from python.
-* Another house to code up the c++ implementation (in Visual Studio).
+* Another hour to code up the c++ implementation (in Visual Studio).
 * Another hour to get the code to get ubuntu setup with the right packages and the code to compile.
 
 I tested the VS c++ and ubuntu c++ against python on one of the files.
@@ -68,7 +68,7 @@ Would expect the runtime of the various parts to be:
 
 * File read: O(size) where size is the filesize
 * Histogramming: O(kmers) where kmers is the total number of kmers (using a hashmap / dictionary)
-* Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output (probabilistic), uniques is the number of unique kmers
+* Topcount: O(uniques + topcount * (lg topcount) * (lg uniques)) where topcount is the number to output, uniques is the number of unique kmers.  This is probabilisitc.
 
 ## c++ implementation (linux)
 
